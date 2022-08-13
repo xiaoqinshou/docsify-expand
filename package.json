@@ -65,7 +65,8 @@
     "*.js": "eslint --fix"
   },
   "dependencies": {
-    "marked": "^1.2.9",
+    "katex": "^0.16.0",
+    "marked": "file:marked-4.0.18.tgz",
     "medium-zoom": "^1.0.6",
     "opencollective-postinstall": "^2.0.2",
     "prismjs": "^1.27.0",

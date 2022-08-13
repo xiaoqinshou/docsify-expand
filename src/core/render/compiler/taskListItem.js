@@ -3,7 +3,7 @@ export const taskListItemCompiler = ({ renderer }) =>
     const isTaskItem = /^(<input.*type="checkbox"[^>]*>)/.test(text);
     const html = isTaskItem
       ? `<li class="task-list-item"><label>${text}</label></li>`
-      : `<li>${text}</li>`;
+      : `<li style="white-space:pre-line">${text}</li>`;
 
     return html;
   });
