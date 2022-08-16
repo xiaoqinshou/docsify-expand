@@ -1,15 +1,37 @@
+/* eslint no-fallthrough: ["error", { "commentPattern": "break[\\s\\w]*omitted" }]*/
 import Prism from 'prismjs';
 // See https://github.com/PrismJS/prism/pull/1367
 import 'prismjs/components/prism-markup-templating';
 
 export const highlightCodeCompiler = ({ renderer }) =>
   (renderer.code = function (code, lang = 'markup') {
-    const langOrMarkup = Prism.languages[lang] || Prism.languages.markup;
-    const text = Prism.highlight(
-      code.replace(/@DOCSIFY_QM@/g, '`'),
-      langOrMarkup,
-      lang
-    );
-
-    return `<pre v-pre data-lang="${lang}"><code class="lang-${lang}">${text}</code></pre>`;
+    let result = '';
+    let language = lang;
+    switch (lang) {
+      case 'plantuml':
+      case 'puml': {
+        const { encode } = window.plantumlEncoder;
+        result =
+          encode &&
+          `<p style="display: flex;justify-content: center;"><img src="https://www.plantuml.com/plantuml/img/${encode(
+            code
+          )}" /></p>`;
+        if (result) {
+          break;
+        }
+        language = 'text';
+        // caution: break is omitted intentionally
+      }
+      default: {
+        const langOrMarkup =
+          Prism.languages[language] || Prism.languages.markup;
+        const text = Prism.highlight(
+          code.replace(/@DOCSIFY_QM@/g, '`'),
+          langOrMarkup,
+          language
+        );
+        result = `<pre v-pre data-lang="${language}"><code data-dependencies="${language}" class="lang-${language}">${text}</code></pre>`;
+      }
+    }
+    return result;
   });

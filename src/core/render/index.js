@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-vars */
 import tinydate from 'tinydate';
+import Prism from 'prismjs';
 import * as dom from '../util/dom';
 import cssVars from '../util/polyfill/css-vars';
 import { getAndActive, sticky } from '../event/sidebar';
@@ -324,6 +325,8 @@ export function Render(Base) {
           this.callHook('afterEach', html, hookData => {
             renderMain.call(this, hookData);
             next();
+            // async highlight
+            Prism.highlightAll();
           });
         };
 
@@ -337,6 +340,8 @@ export function Render(Base) {
               raw: result,
             },
             tokens => {
+              // console.log(tokens, "tokens")
+              // loadCodeFormat(tokens);
               html = this.compiler.compile(tokens);
               callback();
             }
