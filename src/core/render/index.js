@@ -11,6 +11,10 @@ import { scrollActiveSidebar } from '../event/scroll';
 import { Compiler } from './compiler';
 import * as tpl from './tpl';
 import { prerenderEmbed } from './embed';
+import { renderFlowchart } from './render-flowchart';
+import { renderMermaid } from './render-mermaid';
+import { renderVega } from './render-vega';
+import { renderVegaLite } from './render-vega-lite';
 
 let vueGlobalData;
 
@@ -327,6 +331,14 @@ export function Render(Base) {
             next();
             // async highlight
             Prism.highlightAll();
+            // async flowchart
+            renderFlowchart();
+            // async mermaid
+            renderMermaid();
+            // async vega
+            renderVega();
+            // async vega-lite
+            renderVegaLite();
           });
         };
 

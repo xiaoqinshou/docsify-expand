@@ -8,6 +8,24 @@ export const highlightCodeCompiler = ({ renderer }) =>
     let result = '';
     let language = lang;
     switch (lang) {
+      case 'vega': {
+        result = `<p vega-dependencies style="display: flex;justify-content: center;">${code}</p>`;
+        break;
+      }
+      case 'vega-lite': {
+        result = `<p vega-lite-dependencies style="display: flex;justify-content: center;">${code}</p>`;
+        break;
+      }
+      case 'mermaid': {
+        result = `<p mermaid-dependencies style="display: flex;justify-content: center;">${code}</p>`;
+        break;
+      }
+      case 'flow':
+      case 'flowchart':
+      case 'flowcharts': {
+        result = `<p flow-dependencies style="display: flex;justify-content: center;">${code}</p>`;
+        break;
+      }
       case 'plantuml':
       case 'puml': {
         const { encode } = window.plantumlEncoder;

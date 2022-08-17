@@ -412,3 +412,286 @@ Proxy .up.|> Subject
 Proxy -left-> RealSubject
 @enduml
 ```
+
+```flow
+st=>start: Start
+e=>end
+op1=>operation: My Operation
+sub1=>subroutine: My Subroutine
+cond=>condition: Yes
+or No?:>http://www.google.com
+io=>inputoutput: catch something
+st->op1->cond
+cond(yes)->io->e
+cond(no)->sub1(right)->op1
+```
+
+```flowchart
+st=>start: Start
+e=>end
+op1=>operation: My Operation
+sub1=>subroutine: My Subroutine
+cond=>condition: Yes
+or No?:>http://www.google.com
+io=>inputoutput: catch something
+st->op1->cond
+cond(yes)->io->e
+cond(no)->sub1(right)->op1
+```
+
+```flowcharts
+st=>start: Start
+e=>end
+op1=>operation: My Operation
+sub1=>subroutine: My Subroutine
+cond=>condition: Yes
+or No?:>http://www.google.com
+io=>inputoutput: catch something
+st->op1->cond
+cond(yes)->io->e
+cond(no)->sub1(right)->op1
+```
+
+```mermaid
+graph TD;
+    A-->B;
+    A-->C;
+    B-->D;
+    C-->D;
+```
+```mermaid
+gantt
+    dateFormat  YYYY-MM-DD
+    title       Adding GANTT diagram functionality to mermaid
+    excludes    weekends
+    %% (`excludes` accepts specific dates in YYYY-MM-DD format, days of the week ("sunday") or "weekends", but not the word "weekdays".)
+
+    section A section
+    Completed task            :done,    des1, 2014-01-06,2014-01-08
+    Active task               :active,  des2, 2014-01-09, 3d
+    Future task               :         des3, after des2, 5d
+    Future task2              :         des4, after des3, 5d
+
+    section Critical tasks
+    Completed task in the critical line :crit, done, 2014-01-06,24h
+    Implement parser and jison          :crit, done, after des1, 2d
+    Create tests for parser             :crit, active, 3d
+    Future task in critical line        :crit, 5d
+    Create tests for renderer           :2d
+    Add to mermaid                      :1d
+    Functionality added                 :milestone, 2014-01-25, 0d
+
+    section Documentation
+    Describe gantt syntax               :active, a1, after des1, 3d
+    Add gantt diagram to demo page      :after a1  , 20h
+    Add another diagram to demo page    :doc1, after a1  , 48h
+
+    section Last section
+    Describe gantt syntax               :after doc1, 3d
+    Add gantt diagram to demo page      :20h
+    Add another diagram to demo page    :48h
+```
+```mermaid
+ C4Component
+    title Component diagram for Internet Banking System - API Application
+
+    Container(spa, "Single Page Application", "javascript and angular", "Provides all the internet banking functionality to customers via their web browser.")
+    Container(ma, "Mobile App", "Xamarin", "Provides a limited subset ot the internet banking functionality to customers via their mobile mobile device.")
+    ContainerDb(db, "Database", "Relational Database Schema", "Stores user registration information, hashed authentication credentials, access logs, etc.")
+    System_Ext(mbs, "Mainframe Banking System", "Stores all of the core banking information about customers, accounts, transactions, etc.")
+
+    Container_Boundary(api, "API Application") {
+        Component(sign, "Sign In Controller", "MVC Rest Controller", "Allows users to sign in to the internet banking system")
+        Component(accounts, "Accounts Summary Controller", "MVC Rest Controller", "Provides customers with a summary of their bank accounts")
+        Component(security, "Security Component", "Spring Bean", "Provides functionality related to singing in, changing passwords, etc.")
+        Component(mbsfacade, "Mainframe Banking System Facade", "Spring Bean", "A facade onto the mainframe banking system.")
+
+        Rel(sign, security, "Uses")
+        Rel(accounts, mbsfacade, "Uses")
+        Rel(security, db, "Read & write to", "JDBC")
+        Rel(mbsfacade, mbs, "Uses", "XML/HTTPS")
+    }
+
+    Rel_Back(spa, sign, "Uses", "JSON/HTTPS")
+    Rel(spa, accounts, "Uses", "JSON/HTTPS")
+
+    Rel(ma, sign, "Uses", "JSON/HTTPS")
+    Rel(ma, accounts, "Uses", "JSON/HTTPS")
+
+    UpdateRelStyle(spa, sign, $offsetY="-40") 
+    UpdateRelStyle(spa, accounts, $offsetX="40", $offsetY="40")
+
+    UpdateRelStyle(ma, sign, $offsetX="-90", $offsetY="40")
+    UpdateRelStyle(ma, accounts, $offsetY="-40")
+
+        UpdateRelStyle(sign, security, $offsetX="-160", $offsetY="10")
+        UpdateRelStyle(accounts, mbsfacade, $offsetX="140", $offsetY="10")
+        UpdateRelStyle(security, db, $offsetY="-40")
+        UpdateRelStyle(mbsfacade, mbs, $offsetY="-40")
+```
+```vega
+{
+  "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "description": "A scatter plot with trend line calculated via locally-weighted (loess) regression.",
+  "padding": 5,
+  "width": 500,
+  "height": 500,
+  "autosize": "pad",
+
+  "signals": [
+    {
+      "name": "loessBandwidth", "value": 0.3,
+      "bind": {"input": "range", "min": 0.05, "max": 1}
+    },
+    {
+      "name": "groupby", "value": "none",
+      "bind": {"input": "select", "options": ["none", "genre"]}
+    }
+  ],
+
+  "data": [
+    {
+      "name": "movies",
+      "url": "https://vega.github.io/vega/data/movies.json",
+      "transform": [
+        {
+          "type": "filter",
+          "expr": "datum['Rotten Tomatoes Rating'] != null && datum['IMDB Rating'] != null"
+        }
+      ]
+    },
+    {
+      "name": "trend",
+      "source": "movies",
+      "transform": [
+        {
+          "type": "loess",
+          "groupby": [{"signal": "groupby === 'genre' ? 'Major Genre' : 'foo'"}],
+          "bandwidth": {"signal": "loessBandwidth"},
+          "x": "Rotten Tomatoes Rating",
+          "y": "IMDB Rating",
+          "as": ["u", "v"]
+        }
+      ]
+    }
+  ],
+
+  "scales": [
+    {
+      "name": "x",
+      "type": "linear",
+      "domain": {"data": "movies", "field": "Rotten Tomatoes Rating"},
+      "range": "width"
+    },
+    {
+      "name": "y",
+      "type": "linear",
+      "domain": {"data": "movies", "field": "IMDB Rating"},
+      "range": "height"
+    }
+  ],
+
+  "marks": [
+    {
+      "type": "symbol",
+      "from": {"data": "movies"},
+      "encode": {
+        "enter": {
+          "x": {"scale": "x", "field": "Rotten Tomatoes Rating"},
+          "y": {"scale": "y", "field": "IMDB Rating"},
+          "fillOpacity": {"value": 0.5},
+          "size": {"value": 16}
+        }
+      }
+    },
+    {
+      "type": "group",
+      "from": {
+        "facet": {
+          "data": "trend",
+          "name": "curve",
+          "groupby": "Major Genre"
+        }
+      },
+      "marks": [
+        {
+          "type": "line",
+          "from": {"data": "curve"},
+          "encode": {
+            "enter": {
+              "x": {"scale": "x", "field": "u"},
+              "y": {"scale": "y", "field": "v"},
+              "stroke": {"value": "firebrick"}
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
+```
+
+```vega-lite
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "config": {"view": {"stroke": ""}},
+  "width": 800,
+  "height": 200,
+  "data": {
+    "values": [
+      {"country": "Great Britain", "animal": "pigs"},
+      {"country": "Great Britain", "animal": "pigs"},
+      {"country": "Great Britain", "animal": "cattle"},
+      {"country": "Great Britain", "animal": "cattle"},
+      {"country": "Great Britain", "animal": "cattle"},
+      {"country": "Great Britain", "animal": "sheep"},
+      {"country": "Great Britain", "animal": "sheep"},
+      {"country": "Great Britain", "animal": "sheep"},
+      {"country": "Great Britain", "animal": "sheep"},
+      {"country": "Great Britain", "animal": "sheep"},
+      {"country": "Great Britain", "animal": "sheep"},
+      {"country": "Great Britain", "animal": "sheep"},
+      {"country": "Great Britain", "animal": "sheep"},
+      {"country": "Great Britain", "animal": "sheep"},
+      {"country": "Great Britain", "animal": "sheep"},
+      {"country": "United States", "animal": "pigs"},
+      {"country": "United States", "animal": "pigs"},
+      {"country": "United States", "animal": "pigs"},
+      {"country": "United States", "animal": "pigs"},
+      {"country": "United States", "animal": "pigs"},
+      {"country": "United States", "animal": "pigs"},
+      {"country": "United States", "animal": "cattle"},
+      {"country": "United States", "animal": "cattle"},
+      {"country": "United States", "animal": "cattle"},
+      {"country": "United States", "animal": "cattle"},
+      {"country": "United States", "animal": "cattle"},
+      {"country": "United States", "animal": "cattle"},
+      {"country": "United States", "animal": "cattle"},
+      {"country": "United States", "animal": "cattle"},
+      {"country": "United States", "animal": "cattle"},
+      {"country": "United States", "animal": "sheep"},
+      {"country": "United States", "animal": "sheep"},
+      {"country": "United States", "animal": "sheep"},
+      {"country": "United States", "animal": "sheep"},
+      {"country": "United States", "animal": "sheep"},
+      {"country": "United States", "animal": "sheep"},
+      {"country": "United States", "animal": "sheep"}
+    ]
+  },
+  "transform": [
+    {
+      "calculate": "{'cattle': '🐄', 'pigs': '🐖', 'sheep': '🐏'}[datum.animal]",
+      "as": "emoji"
+    },
+    {"window": [{"op": "rank", "as": "rank"}], "groupby": ["country", "animal"]}
+  ],
+  "mark": {"type": "text", "baseline": "middle"},
+  "encoding": {
+    "x": {"field": "rank", "type": "ordinal", "axis": null},
+    "y": {"field": "animal", "type": "nominal", "axis": null, "sort": null},
+    "row": {"field": "country", "header": {"title": ""}},
+    "text": {"field": "emoji", "type": "nominal"},
+    "size": {"value": 65}
+  }
+}
+```
