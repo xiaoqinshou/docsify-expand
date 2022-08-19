@@ -18,30 +18,45 @@
 //
 // If using RequireJS or bundler (eg. webpack), include `<script src="path/to/mermaid.min.js"></script>` manually,
 // before RequireJS or `dist/your_app.js`
+import { loadScript } from '../util';
+
+const mermaidPath = '//cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js';
+const renderer = dom => {
+  dom.removeAttribute('mermaid-dependencies');
+  dom.setAttribute('mermaid-dependencies-finish', '');
+  const code = dom.textContent;
+  dom.innerText = '';
+  try {
+    const id = '_mermaid_id_' + Math.round(1e9 * Math.random()).toString(36);
+    window.mermaid.parse(code);
+    window.mermaid.render(id, code, (svgCode, bindFunctions) => {
+      dom.innerHTML = svgCode;
+      if (bindFunctions) {
+        bindFunctions(dom);
+      }
+    });
+  } catch (error) {
+    dom.innerHTML = `<pre class="language-text">${error.toString()}</pre>`;
+  }
+};
 
 export function renderMermaid() {
   const pDoms = document.getElementsByTagName('p');
+  const tasks = [];
   for (let i = 0; i < pDoms.length; i++) {
     const pDom = pDoms[i];
     const isFlow = pDom.hasAttribute('mermaid-dependencies');
     if (isFlow) {
-      pDom.removeAttribute('mermaid-dependencies');
-      pDom.setAttribute('mermaid-dependencies-finish', '');
-      const code = pDom.textContent;
-      pDom.innerText = '';
-      try {
-        const id =
-          '_mermaid_id_' + Math.round(1e9 * Math.random()).toString(36);
-        window.mermaid.parse(code);
-        window.mermaid.render(id, code, (svgCode, bindFunctions) => {
-          pDom.innerHTML = svgCode;
-          if (bindFunctions) {
-            bindFunctions(pDom);
-          }
-        });
-      } catch (error) {
-        pDom.innerHTML = `<pre class="language-text">${error.str.toString()}</pre>`;
-      }
+      tasks.push(pDom);
+    }
+  }
+  if (tasks.length > 0) {
+    if (!window.mermaid) {
+      loadScript(mermaidPath, () => {
+        tasks.forEach(renderer);
+      });
+    } else {
+      tasks.forEach(renderer);
     }
   }
 }

@@ -6,6 +6,7 @@ import 'prismjs/components/prism-markup-templating';
 export const highlightCodeCompiler = ({ renderer }) =>
   (renderer.code = function (code, lang = 'markup') {
     let result = '';
+    lang = lang.toLowerCase();
     let language = lang;
     switch (lang) {
       case 'vega': {

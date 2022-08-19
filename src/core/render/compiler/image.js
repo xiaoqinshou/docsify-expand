@@ -35,7 +35,12 @@ export const imageCompiler = ({ renderer, contentBase, router }) =>
     }
 
     if (!isAbsolutePath(href)) {
-      url = getPath(contentBase, getParentPath(router.getCurrentPath()), href);
+      // url ch-zn decode
+      url = getPath(
+        contentBase,
+        getParentPath(decodeURIComponent(router.getCurrentPath())),
+        href
+      );
     }
 
     if (attrs.length > 0) {
